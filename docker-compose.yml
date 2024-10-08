@@ -1,0 +1,42 @@
+services:
+  moodle:
+    image: bitnami/moodle:latest
+    ports:
+      - '8080:8080'
+      - '8443:8443'
+    environment:
+      - MOODLE_USERNAME=admin
+      - MOODLE_PASSWORD=password123
+      - MOODLE_EMAIL=admin@example.com
+      - MOODLE_DATABASE_PASSWORD=db_password
+      - BITNAMI_DEBUG=true
+    volumes:
+      - '.:/bitnami/'
+      #- './moodle-custom/blocks/testblockname:/bitnami/moodle/blocks/testblockname/'
+      - './moodle-custom/blocks/userlist:/bitnami/moodle/blocks/userlist/'
+      - './moodle-custom/blocks/mvcuserlist:/bitnami/moodle/blocks/mvcuserlist/'
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: bitnami/mariadb:latest
+    environment:
+      - MARIADB_ROOT_PASSWORD=root_password
+      - MARIADB_USER=bn_moodle
+      - MARIADB_PASSWORD=db_password
+      - MARIADB_DATABASE=bitnami_moodle
+    volumes:
+      #- 'mariadb_data:/bitnami/mariadb'
+      - 'mariadb_data:/opt/bitnami/mysql/bin/mariadb'
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: 't_test_phpmyadmin'
+    environment:
+      PMA_HOST: mariadb
+    ports:
+      - "1750:80"
+
+volumes:
+  mariadb_data:
+    driver: local
