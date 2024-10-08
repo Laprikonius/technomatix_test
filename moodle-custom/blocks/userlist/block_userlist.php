@@ -87,12 +87,17 @@ class block_userlist extends block_base {
     
         $users = $DB->get_records('user', null, '', 'id, firstname, lastname, email');
         $grades = $DB->get_records('block_userlist_grades');
+        foreach ($grades as $grade) {
+            $arGrades[$grade->userid] = $grade->grade;
+        }
+        //var_dump($arGrades);
     
         $table = new html_table();
         $table->head = ['ID', 'Имя', 'Фамилия', 'E-mail', 'Оценка'];
     
         foreach ($users as $user) {
-            $grade = isset($grades[$user->id]) ? $grades[$user->id]->grade : 'Не оценен';
+            //var_dump($grades[$user->id]->grade);
+            $grade = isset($arGrades[$user->id]) ? $arGrades[$user->id] : 'Не оценен';
             $table->data[] = [$user->id, $user->firstname, $user->lastname, $user->email, $grade];
         }
     
